@@ -11,9 +11,11 @@ export class TodosService {
   ) {}
 
   // Insert a new record
-  async create(todo: Todo): Promise<Todo> {
-    return this.todoRepository.save(todo);
+  async create(todo: Todo) {
+    todo.updatedAt = null; // Ensure `updatedAt` starts as null
+    return await this.todoRepository.save(todo);
   }
+  
 
   // Fetch all records
   async findAll(): Promise<Todo[]> {
@@ -23,5 +25,16 @@ export class TodosService {
   // Fetch a single record by ID
   async findOne(id: number): Promise<Todo> {
     return this.todoRepository.findOne({ where: { id } });
+  }
+
+  // Update a record by ID
+  async update(id: number, todo: Partial<Todo>): Promise<Todo> {
+    await this.todoRepository.update(id, todo);
+    return this.findOne(id); // Return the updated record
+  }
+
+  // Delete a record by ID
+  async delete(id: number): Promise<void> {
+    await this.todoRepository.delete(id);
   }
 }
