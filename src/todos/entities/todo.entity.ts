@@ -1,19 +1,33 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Controller, Get, Post, Param, Body, Put, Delete } from '@nestjs/common';
+import { TodosService } from './todos.service';
+import { Todo } from './entities/todo.entity';
 
-@Entity()
-export class Todo {
-  @PrimaryGeneratedColumn()
-  id: number;
+@Controller('todos')
+export class TodosController {
+  constructor(private readonly todosService: TodosService) {}
 
-  @Column()
-  firstName: string;
+  @Post()
+  create(@Body() todo: Todo) {
+    return this.todosService.create(todo);
+  }
 
-  @Column()
-  lastName: string;
+  @Get()
+  findAll() {
+    return this.todosService.findAll();
+  }
 
-  @Column()
-  email: string;
+  @Get(':id')
+  findOne(@Param('id') id: number) {
+    return this.todosService.findOne(id);
+  }
 
-  @Column()
-  enrollmentDate: string;
+  @Put(':id')
+  update(@Param('id') id: number, @Body() todo: Partial<Todo>) {
+    return this.todosService.update(id, todo);
+  }
+
+  @Delete(':id')
+  delete(@Param('id') id: number) {
+    return this.todosService.delete(id);
+  }
 }
