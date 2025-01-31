@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body, Put, Delete } from '@nestjs/common';
 import { TodosService } from './todos.service';
 import { Todo } from './entities/todo.entity';
 
@@ -6,21 +6,28 @@ import { Todo } from './entities/todo.entity';
 export class TodosController {
   constructor(private readonly todosService: TodosService) {}
 
-  // POST endpoint to insert data
   @Post()
-  async create(@Body() todo: Todo): Promise<Todo> {
+  create(@Body() todo: Todo) {
     return this.todosService.create(todo);
   }
 
-  // GET endpoint to fetch all records
   @Get()
-  async findAll(): Promise<Todo[]> {
+  findAll() {
     return this.todosService.findAll();
   }
 
-  // GET endpoint to fetch a record by ID
   @Get(':id')
-  async findOne(@Param('id') id: number): Promise<Todo> {
+  findOne(@Param('id') id: number) {
     return this.todosService.findOne(id);
+  }
+
+  @Put(':id')
+  update(@Param('id') id: number, @Body() todo: Partial<Todo>) {
+    return this.todosService.update(id, todo);
+  }
+
+  @Delete(':id')
+  delete(@Param('id') id: number) {
+    return this.todosService.delete(id);
   }
 }
