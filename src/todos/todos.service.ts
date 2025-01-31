@@ -10,9 +10,9 @@ export class TodosService {
         private readonly todoRepository: Repository<Todo>,
     ) {}
 
-    // Insert a new record
+    // Insert a new record with updatedAt as null
     async create(todo: Todo): Promise<Todo> {
-        todo.updatedAt = new Date(); // Set updated timestamp
+        todo.updatedAt = null; // Ensure updatedAt is empty on creation
         return await this.todoRepository.save(todo);
     }
 
@@ -28,12 +28,14 @@ export class TodosService {
         return todo;
     }
 
-    // Update a record by ID
+    // Update a record by ID, setting updatedAt only if updating
     async update(id: number, todo: Partial<Todo>): Promise<Todo> {
         const existingTodo = await this.findOne(id);
         if (!existingTodo) throw new NotFoundException(`Todo with ID ${id} not found`);
         
-        await this.todoRepository.update(id, { ...todo, updatedAt: new Date() });
+        todo.updatedAt = new Date(); // Set updatedAt only when updating
+        
+        await this.todoRepository.update(id, todo);
         return this.findOne(id); // Return updated record
     }
 
